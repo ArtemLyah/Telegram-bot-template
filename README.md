@@ -1,1 +1,2 @@
 Telegram Bot template
+base_template

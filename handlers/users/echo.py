@@ -1,5 +1,8 @@
-from .libraries import *
+from aiogram import filters, types
+from dispatcher import dp
 from filters import CommandBot
+
+# handle private messages
 
 @dp.message_handler(filters.CommandStart())
 async def start(message:types.Message):

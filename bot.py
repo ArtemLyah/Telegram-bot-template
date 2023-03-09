@@ -1,16 +1,28 @@
-from aiogram import executor
-
-from dispatcher import dp
-from middlewares.user_middleware import GetDBUserMiddleware
 from utils.set_bot_commands import set_default_commands
+from loader import dispatcher, bot
+from handlers import users_router, group_router, error_router
+from middlewares import LoggingMessageMiddleware, LoggingCallbackMiddleware, LoggingInlineMiddleware
+from utils.logs import logger
+import asyncio
 
-import filters
-import handlers
-
-async def on_startup(dp):
-    await set_default_commands(dp)
-    dp.middleware.setup(GetDBUserMiddleware())
+async def on_startup():
+    await set_default_commands(bot)
+    await bot.delete_webhook(drop_pending_updates=True) # skip updates
     print("OK")
 
+async def main():
+    dispatcher.include_router(users_router)
+    dispatcher.include_router(group_router)
+    dispatcher.include_router(error_router)
+
+    dispatcher.message.outer_middleware(LoggingMessageMiddleware())
+    dispatcher.callback_query.outer_middleware(LoggingCallbackMiddleware())
+    dispatcher.inline_query.outer_middleware(LoggingInlineMiddleware())
+
+    logger.debug("Start DiaRatingBot")
+
+    await on_startup()
+    await dispatcher.start_polling(bot)
+
 if __name__ == "__main__":
-    executor.start_polling(dp, on_startup=on_startup, skip_updates=True)
+    asyncio.run(main())

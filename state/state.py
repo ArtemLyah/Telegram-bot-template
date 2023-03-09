@@ -1,7 +1,5 @@
-from aiogram.dispatcher.filters.state import StatesGroup, State
-
-# create state group that will be used in handling messages on different levels
-# the methods will be levels or pages of the bot's answers
+from aiogram.fsm.state import StatesGroup, State
 
 class Statemachine(StatesGroup):
-    s1 = State()
+    step1 = State()
+    step2 = State()

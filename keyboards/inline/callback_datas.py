@@ -1,4 +1,5 @@
-from aiogram.utils.callback_data import CallbackData
+from aiogram.filters.callback_data import CallbackData
 
-# buy - prefix; category, type - parameters -> prefix:parameters
-# buy:catalog:clothes
+class SendExtraData(CallbackData, prefix="extra"):
+    message: str
+    type_: str

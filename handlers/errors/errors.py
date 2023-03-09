@@ -1,10 +1,17 @@
-from dispatcher import dp
-from aiogram import types
-from aiogram.utils import exceptions
+from aiogram import Router, types
+from aiogram import exceptions
+from loader import bot
+from config import FATHER_ID
+from traceback import format_exc
 import logging
 
-@dp.errors_handler()
-async def error_handler(update:types.Update, exception):
-    if isinstance(exception, exceptions.BotBlocked):
+error_router = Router()
+
+@error_router.errors()
+async def error_handler(event: types.ErrorEvent):
+    if isinstance(event.exception, exceptions.TelegramBadRequest):
         logging.debug("Bot was blocked")
+
+    logging.exception(format_exc())
+    await bot.send_message(FATHER_ID, format_exc(limit=-1, chain=False))
     return True
